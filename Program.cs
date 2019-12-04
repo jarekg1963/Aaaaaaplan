@@ -11,39 +11,45 @@ namespace prservice
         static void Main(string[] args)
         {
 
-            Generuj g = new Generuj();
-            g.GenerujPlik();
-            SendFileToServer s = new SendFileToServer();
-            s.Send();
+            // Deklaracja zmiennych globalnych 
 
+            string katalogusLokalny = @"c:\testy\SQL\Anaplan\";
+            string dzien = (DateTime.Today.Day < 10) ? "0" + DateTime.Today.Day.ToString() : DateTime.Today.Day.ToString();
+            string mc = (DateTime.Today.Month < 10) ? "0" + DateTime.Today.Month.ToString() : DateTime.Today.Month.ToString();
+            string StrData = dzien + mc + DateTime.Today.Year.ToString();
+            string pathPlik = katalogusLokalny + "AnaplanToEflow" + StrData + ".csv";
+            string plik = "AnaplanToEflow" + StrData + ".csv";
+
+            // Generowanie pliku tekstowego z MSSQL - a
+
+            zapiszDoLogu z = new zapiszDoLogu();
+            z.startProgramu(katalogusLokalny);
+
+            Generuj g = new Generuj();
+            g.GenerujPlik(katalogusLokalny, pathPlik);
+            // Kopiowanie na FTP 
+            SendFileToServer s = new SendFileToServer();
+            s.Send(katalogusLokalny, StrData, pathPlik, plik);
+
+
+            z.KoniecProgramu(katalogusLokalny);
         }
 
         class Generuj
         {
-
-            public void GenerujPlik()
+            public void GenerujPlik(string kat, string pathPlik)
             {
-                string katalogRoboczy = @"c:\testy\SQL\Anaplan\";
-                string dzien = (DateTime.Today.Day < 10) ? "0" + DateTime.Today.Day.ToString() : DateTime.Today.Day.ToString();
-                string mc = (DateTime.Today.Month < 10) ? "0" + DateTime.Today.Month.ToString() : DateTime.Today.Month.ToString();
-                string StrData = dzien + mc + DateTime.Today.Year.ToString();
-                string pathPlik = katalogRoboczy + "AnaplanToEflow" + StrData + ".csv";
-
-                string plikSql = katalogRoboczy + "sqlcomenda.txt";
-
-
+                string plikSql = kat + "sqlcomenda.txt";
                 string polecenieSQL = System.IO.File.ReadAllText(plikSql);
-                // Display the file contents to the console. Variable text is a string.
+
                 System.Console.WriteLine("Contents of WriteText.txt = {0}", polecenieSQL);
 
-                // var connectionString = @"Server=DESKTOP-M9PRPPC\MSSQLSERVER01;Database=Derogation_System;Trusted_Connection=True;";
                 var connectionString = @"Data Source=172.26.60.102;Initial Catalog=MRO;User =webdb.admin; Password = Webdb.Admin ";
                 using (var client = new SqlConnection(connectionString))
                 {
                     client.Open();
                     SqlCommand cmd = new SqlCommand(polecenieSQL, client);
                     SqlDataReader reader = cmd.ExecuteReader();
-
                     StreamWriter sw = File.CreateText(pathPlik);
                     while (reader.Read())
                     {
@@ -54,7 +60,6 @@ namespace prservice
                     }
                     reader.Close();
                     sw.Dispose();
-
                 }
             }
         }
@@ -68,14 +73,9 @@ namespace prservice
             // Enter your sftp password here
             private static string password = "Kgqd1z6K";
 
-            static string katalogRoboczy = @"c:\testy\SQL\Anaplan\";
-            static string dzien = (DateTime.Today.Day < 10) ? "0" + DateTime.Today.Day.ToString() : DateTime.Today.Day.ToString();
-            static string mc = (DateTime.Today.Month < 10) ? "0" + DateTime.Today.Month.ToString() : DateTime.Today.Month.ToString();
-            static string StrData = dzien + mc + DateTime.Today.Year.ToString();
-            string pathPlik = katalogRoboczy + "AnaplanToEflow" + StrData + ".csv";
-            string plik = "AnaplanToEflow" + StrData + ".csv";
-            public void Send()
+            public void Send(string kat, string StrData, string pathPlik, string plik)
             {
+
                 var connectionInfo = new ConnectionInfo(host, "sftp", new PasswordAuthenticationMethod(username, password));
                 // Upload File
                 using (var sftp = new SftpClient(connectionInfo))
@@ -88,8 +88,32 @@ namespace prservice
                     }
                     sftp.Disconnect();
                 }
-
             }
         }
+
+        class zapiszDoLogu
+        {
+
+            public void startProgramu(string katalogusLokalny)
+            {
+              
+                StreamWriter writetext = File.AppendText(katalogusLokalny + "log.txt");
+                writetext.WriteLine("program wystartowal " + DateTime.Now.ToLongDateString() + "    " + DateTime.Now.ToLongTimeString());
+                writetext.Dispose();
+            }
+
+
+            public void KoniecProgramu(string katalogusLokalny)
+            {
+               
+             
+                StreamWriter writetext = File.AppendText(katalogusLokalny + "log.txt");
+              writetext.WriteLine("zakonczyl dzialanie  " + DateTime.Now.ToLongDateString() + "  " + DateTime.Now.ToLongTimeString());
+                writetext.Dispose();
+            }
+
+        }
+
     }
 }
+
