@@ -16,3 +16,6 @@ c:\Praca\Anaplan\c#\prservice\bin\Debug\netcoreapp3.0\runtimes\win\lib\netstanda
 C:\Praca\Anaplan\c#\prservice\obj\Debug\netcoreapp3.0\prservice.csproj.CopyComplete
 c:\Praca\Anaplan\c#\prservice\obj\Debug\netcoreapp3.0\prservice.dll
 c:\Praca\Anaplan\c#\prservice\obj\Debug\netcoreapp3.0\prservice.pdb
+c:\Praca\Anaplan\c#\prservice\bin\Debug\netcoreapp3.0\Renci.SshNet.dll
+c:\Praca\Anaplan\c#\prservice\bin\Debug\netcoreapp3.0\SshNet.Security.Cryptography.dll
+c:\Praca\Anaplan\c#\prservice\bin\Debug\netcoreapp3.0\System.Xml.XPath.XmlDocument.dll
