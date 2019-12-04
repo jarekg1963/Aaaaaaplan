@@ -29,6 +29,7 @@ namespace prservice
             g.GenerujPlik(katalogusLokalny, pathPlik);
             // Kopiowanie na FTP 
             SendFileToServer s = new SendFileToServer();
+        
             s.Send(katalogusLokalny, StrData, pathPlik, plik);
 
 
@@ -93,7 +94,6 @@ namespace prservice
 
         class zapiszDoLogu
         {
-
             public void startProgramu(string katalogusLokalny)
             {
               
@@ -104,9 +104,7 @@ namespace prservice
 
 
             public void KoniecProgramu(string katalogusLokalny)
-            {
-               
-             
+            {             
                 StreamWriter writetext = File.AppendText(katalogusLokalny + "log.txt");
               writetext.WriteLine("zakonczyl dzialanie  " + DateTime.Now.ToLongDateString() + "  " + DateTime.Now.ToLongTimeString());
                 writetext.Dispose();
