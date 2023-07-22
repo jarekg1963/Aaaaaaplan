@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="SSH.NET" Version="2016.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
 </Project>
